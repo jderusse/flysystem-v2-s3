@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="282a0814-cccd-4d7f-a786-ff208159698e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/FUNDING.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/checks.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/ci.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/static.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/flysystem-v2-s3.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.php_cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/phpstan-baseline.neon" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/phpstan.neon.dist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/phpunit.xml.dist" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/psalm.baseline" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/psalm.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/PortableVisibilityConverter.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/S3Filesystem.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/VisibilityConverter.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/AwsS3V3FilesystemTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/S3ClientStub.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP Homebrew">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/vendor/flysystem/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/aws/aws-sdk-php" />
+      <path value="$PROJECT_DIR$/vendor/mtdowling/jmespath.php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/s3" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/core" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/symfony/phpunit-bridge" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1XMHILz3okHqIKlr2q5C7LiTtAy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/tests" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="282a0814-cccd-4d7f-a786-ff208159698e" name="Default Changelist" comment="" />
+      <created>1580848962747</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1580848962747</updated>
+      <workItem from="1580848964238" duration="256000" />
+      <workItem from="1580849384567" duration="2137000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2561" y="-82" key="#com.intellij.ide.util.MemberChooser" timestamp="1580850660228">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2561" y="-82" key="#com.intellij.ide.util.MemberChooser/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580850660228" />
+    <state x="2354" y="-707" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1580850033399">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2354" y="-707" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580850033399" />
+    <state x="2261" y="-135" key="SettingsEditor" timestamp="1580849967405">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2261" y="-135" key="SettingsEditor/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580849967405" />
+    <state x="2425" y="-270" width="670" height="676" key="search.everywhere.popup" timestamp="1580850657356">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2425" y="-270" width="670" height="676" key="search.everywhere.popup/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580850657356" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/src/PortableVisibilityConverter.php</url>
+          <line>6</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
