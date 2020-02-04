@@ -26,7 +26,7 @@ class PortableVisibilityConverter implements VisibilityConverter
 
     public function visibilityToAcl(string $visibility): string
     {
-        if ($visibility === Visibility::PUBLIC) {
+        if (Visibility::PUBLIC === $visibility) {
             return self::PUBLIC_ACL;
         }
 
@@ -45,7 +45,7 @@ class PortableVisibilityConverter implements VisibilityConverter
             $granteeUri = $grantee->getURI();
             $permission = $grant->getPermission();
 
-            if ($granteeUri === self::PUBLIC_GRANTEE_URI && $permission === self::PUBLIC_GRANTS_PERMISSION) {
+            if (self::PUBLIC_GRANTEE_URI === $granteeUri && self::PUBLIC_GRANTS_PERMISSION === $permission) {
                 return Visibility::PUBLIC;
             }
         }

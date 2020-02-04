@@ -24,7 +24,6 @@ use League\Flysystem\UnableToReadFile;
 use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\UnableToSetVisibility;
 use League\Flysystem\Visibility;
-use Psr\Http\Message\StreamInterface;
 use Throwable;
 
 class S3Filesystem implements FilesystemAdapter
@@ -103,6 +102,7 @@ class S3Filesystem implements FilesystemAdapter
                     'Key' => $this->prefixer->prefixPath($path),
                 ]
             )->resolve();
+
             return true;
         } catch (ClientException $e) {
             return false;
@@ -112,52 +112,6 @@ class S3Filesystem implements FilesystemAdapter
     public function write(string $path, string $contents, Config $config): void
     {
         $this->upload($path, $contents, $config);
-    }
-
-    /**
-     * @param string          $path
-     * @param string|resource $body
-     * @param Config          $config
-     */
-    private function upload(string $path, $body, Config $config): void
-    {
-        $key = $this->prefixer->prefixPath($path);
-        $acl = $this->determineAcl($config);
-        $options = $this->createOptionsFromConfig($config);
-        $shouldDetermineMimetype = $body !== '' && ! array_key_exists('ContentType', $options);
-
-        if ($shouldDetermineMimetype && $mimeType = MimeType::detectMimeType($key, $body)) {
-            $options['ContentType'] = $mimeType;
-        }
-
-        $this->client->putObject(array_merge($options, [
-            'Bucket'=> $this->bucket,
-            'Key' => $key,
-            'Body' => $body,
-            'ACL' => $acl,
-            ]))->resolve();
-    }
-
-    private function determineAcl(Config $config): string
-    {
-        $visibility = (string) $config->get(Config::OPTION_VISIBILITY, Visibility::PRIVATE);
-
-        return $this->visibility->visibilityToAcl($visibility);
-    }
-
-    private function createOptionsFromConfig(Config $config): array
-    {
-        $options = [];
-
-        foreach (static::AVAILABLE_OPTIONS as $option) {
-            $value = $config->get($option, '__NOT_SET__');
-
-            if ($value !== '__NOT_SET__') {
-                $options[$option] = $value;
-            }
-        }
-
-        return $options;
     }
 
     public function writeStream(string $path, $contents, Config $config): void
@@ -204,15 +158,15 @@ class S3Filesystem implements FilesystemAdapter
     {
         $this->upload(rtrim($path, '/') . '/', '', $config->withDefaults([
             'visibility' => $this->visibility->defaultForDirectories(),
-       ]));
+        ]));
     }
 
     public function setVisibility(string $path, $visibility): void
     {
         $arguments = [
             'Bucket' => $this->bucket,
-            'Key'    => $this->prefixer->prefixPath($path),
-            'ACL'    => $this->visibility->visibilityToAcl($visibility),
+            'Key' => $this->prefixer->prefixPath($path),
+            'ACL' => $this->visibility->visibilityToAcl($visibility),
         ];
         $result = $this->client->putObjectAcl($arguments);
 
@@ -239,6 +193,114 @@ class S3Filesystem implements FilesystemAdapter
         return new FileAttributes($path, null, $visibility);
     }
 
+    public function mimeType(string $path): FileAttributes
+    {
+        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_MIME_TYPE);
+    }
+
+    public function lastModified(string $path): FileAttributes
+    {
+        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_LAST_MODIFIED);
+    }
+
+    public function fileSize(string $path): FileAttributes
+    {
+        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_FILE_SIZE);
+    }
+
+    public function listContents(string $path, bool $recursive): Generator
+    {
+        $prefix = $this->prefixer->prefixPath($path);
+        $options = ['Bucket' => $this->bucket, 'Prefix' => trim($prefix, '/') . '/'];
+
+        if (false === $recursive) {
+            $options['Delimiter'] = '/';
+        }
+
+        $listing = $this->retrievePaginatedListing($options);
+
+        foreach ($listing as $item) {
+            // TODO verify if this is the correct data to send.
+            yield $this->mapS3ObjectMetadata($item);
+        }
+    }
+
+    public function move(string $source, string $destination, Config $config): void
+    {
+        try {
+            $this->copy($source, $destination, $config);
+            $this->delete($source);
+        } catch (FilesystemOperationFailed $exception) {
+            throw UnableToMoveFile::fromLocationTo($source, $destination, $exception);
+        }
+    }
+
+    public function copy(string $source, string $destination, Config $config): void
+    {
+        try {
+            $visibility = $this->visibility($source)->visibility();
+        } catch (Throwable $exception) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination, $exception);
+        }
+        $arguments = [
+            'ACL' => $this->visibility->visibilityToAcl($visibility),
+            'Bucket' => $this->bucket,
+            'Key' => $this->prefixer->prefixPath($destination),
+            'CopySource' => rawurlencode($this->bucket . '/' . $this->prefixer->prefixPath($source)),
+        ];
+        $result = $this->client->copyObject($arguments);
+
+        try {
+            $result->resolve();
+        } catch (Throwable $exception) {
+            throw UnableToCopyFile::fromLocationTo($source, $destination, $exception);
+        }
+    }
+
+    /**
+     * @param string|resource $body
+     */
+    private function upload(string $path, $body, Config $config): void
+    {
+        $key = $this->prefixer->prefixPath($path);
+        $acl = $this->determineAcl($config);
+        $options = $this->createOptionsFromConfig($config);
+        $shouldDetermineMimetype = '' !== $body && !\array_key_exists('ContentType', $options);
+
+        if ($shouldDetermineMimetype && $mimeType = MimeType::detectMimeType($key, $body)) {
+            $options['ContentType'] = $mimeType;
+        }
+
+        $this->client->putObject(array_merge($options, [
+            'Bucket' => $this->bucket,
+            'Key' => $key,
+            'Body' => $body,
+            'ACL' => $acl,
+        ]))->resolve();
+    }
+
+    private function determineAcl(Config $config): string
+    {
+        $visibility = (string) $config->get(Config::OPTION_VISIBILITY, Visibility::PRIVATE);
+
+        return $this->visibility->visibilityToAcl($visibility);
+    }
+
+    private function createOptionsFromConfig(Config $config): array
+    {
+        $options = [];
+
+        foreach (static::AVAILABLE_OPTIONS as $option) {
+            $value = $config->get($option, '__NOT_SET__');
+
+            if ('__NOT_SET__' !== $value) {
+                $options[$option] = $value;
+            }
+        }
+
+        return $options;
+    }
+
     private function fetchFileMetadata(string $path, string $type): FileAttributes
     {
         $arguments = ['Bucket' => $this->bucket, 'Key' => $this->prefixer->prefixPath($path)];
@@ -253,7 +315,7 @@ class S3Filesystem implements FilesystemAdapter
         // TODO verify Metadata on result.  https://github.com/async-aws/aws/issues/91
         $attributes = $this->mapS3ObjectMetadata($result, $path);
 
-        if ( ! $attributes instanceof FileAttributes) {
+        if (!$attributes instanceof FileAttributes) {
             throw UnableToRetrieveMetadata::create($path, $type, '');
         }
 
@@ -262,11 +324,11 @@ class S3Filesystem implements FilesystemAdapter
 
     private function mapS3ObjectMetadata(array $metadata, $path = null): StorageAttributes
     {
-        if ($path === null) {
+        if (null === $path) {
             $path = $this->prefixer->stripPrefix($metadata['Key'] ?? $metadata['Prefix']);
         }
 
-        if (substr($path, -1) === '/') {
+        if ('/' === substr($path, -1)) {
             return new DirectoryAttributes(rtrim($path, '/'));
         }
 
@@ -289,44 +351,12 @@ class S3Filesystem implements FilesystemAdapter
         $extracted = [];
 
         foreach (static::EXTRA_METADATA_FIELDS as $field) {
-            if (isset($metadata[$field]) && $metadata[$field] !== '') {
+            if (isset($metadata[$field]) && '' !== $metadata[$field]) {
                 $extracted[$field] = $metadata[$field];
             }
         }
 
         return $extracted;
-    }
-
-    public function mimeType(string $path): FileAttributes
-    {
-        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_MIME_TYPE);
-    }
-
-    public function lastModified(string $path): FileAttributes
-    {
-        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_LAST_MODIFIED);
-    }
-
-    public function fileSize(string $path): FileAttributes
-    {
-        return $this->fetchFileMetadata($path, FileAttributes::ATTRIBUTE_FILE_SIZE);
-    }
-
-    public function listContents(string $path, bool $recursive): Generator
-    {
-        $prefix = $this->prefixer->prefixPath($path);
-        $options = ['Bucket' => $this->bucket, 'Prefix' => trim($prefix, '/') . '/'];
-
-        if ($recursive === false) {
-            $options['Delimiter'] = '/';
-        }
-
-        $listing = $this->retrievePaginatedListing($options);
-
-        foreach ($listing as $item) {
-            // TODO verify if this is the correct data to send.
-            yield $this->mapS3ObjectMetadata($item);
-        }
     }
 
     private function retrievePaginatedListing(array $options): Generator
@@ -337,42 +367,6 @@ class S3Filesystem implements FilesystemAdapter
         foreach ($result->iterable() as $item) {
             yield from ($item->getCommonPrefixes());
             yield from ($item->getContents());
-        }
-    }
-
-    public function move(string $source, string $destination, Config $config): void
-    {
-        try {
-            $this->copy($source, $destination, $config);
-            $this->delete($source);
-        } catch (FilesystemOperationFailed $exception) {
-            throw UnableToMoveFile::fromLocationTo($source, $destination, $exception);
-        }
-    }
-
-    public function copy(string $source, string $destination, Config $config): void
-    {
-        try {
-            $visibility = $this->visibility($source)->visibility();
-        } catch (Throwable $exception) {
-            throw UnableToCopyFile::fromLocationTo(
-                $source,
-                $destination,
-                $exception
-            );
-        }
-        $arguments = [
-            'ACL'        => $this->visibility->visibilityToAcl($visibility),
-            'Bucket'     => $this->bucket,
-            'Key'        => $this->prefixer->prefixPath($destination),
-            'CopySource' => rawurlencode($this->bucket . '/' . $this->prefixer->prefixPath($source)),
-        ];
-        $result = $this->client->copyObject($arguments);
-
-        try {
-            $result->resolve();
-        } catch (Throwable $exception) {
-            throw UnableToCopyFile::fromLocationTo($source, $destination, $exception);
         }
     }
 

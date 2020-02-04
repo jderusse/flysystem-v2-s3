@@ -2,35 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="282a0814-cccd-4d7f-a786-ff208159698e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/FUNDING.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/.editorconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/checks.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/ci.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.github/workflows/static.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/flysystem-v2-s3.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.php_cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/phpstan-baseline.neon" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/phpstan.neon.dist" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/phpunit.xml.dist" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/psalm.baseline" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/psalm.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/PortableVisibilityConverter.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/S3Filesystem.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/VisibilityConverter.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/AwsS3V3FilesystemTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/S3ClientStub.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/phpstan.neon.dist" beforeDir="false" afterPath="$PROJECT_DIR$/phpstan.neon.dist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/psalm.xml" beforeDir="false" afterPath="$PROJECT_DIR$/psalm.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PortableVisibilityConverter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/PortableVisibilityConverter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/S3Filesystem.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/S3Filesystem.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VisibilityConverter.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/VisibilityConverter.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,12 +97,26 @@
       <option name="presentableId" value="Default" />
       <updated>1580848962747</updated>
       <workItem from="1580848964238" duration="256000" />
-      <workItem from="1580849384567" duration="2137000" />
+      <workItem from="1580849384567" duration="2392000" />
     </task>
+    <task id="LOCAL-00001" summary="Init">
+      <created>1580851532221</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1580851532221</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Init" />
+    <option name="LAST_COMMIT_MESSAGE" value="Init" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2561" y="-82" key="#com.intellij.ide.util.MemberChooser" timestamp="1580850660228">
@@ -135,10 +127,18 @@
       <screen x="1920" y="-707" width="3360" height="1867" />
     </state>
     <state x="2354" y="-707" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580850033399" />
+    <state x="2335" y="-72" key="CommitChangelistDialog2" timestamp="1580851531737">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2335" y="-72" key="CommitChangelistDialog2/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580851531737" />
     <state x="2261" y="-135" key="SettingsEditor" timestamp="1580849967405">
       <screen x="1920" y="-707" width="3360" height="1867" />
     </state>
     <state x="2261" y="-135" key="SettingsEditor/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580849967405" />
+    <state x="2360" y="-34" key="Vcs.Push.Dialog.v2" timestamp="1580851533933">
+      <screen x="1920" y="-707" width="3360" height="1867" />
+    </state>
+    <state x="2360" y="-34" key="Vcs.Push.Dialog.v2/5280.-707.3317.1867/1920.-707.3360.1867/0.23.1920.1177@1920.-707.3360.1867" timestamp="1580851533933" />
     <state x="2425" y="-270" width="670" height="676" key="search.everywhere.popup" timestamp="1580850657356">
       <screen x="1920" y="-707" width="3360" height="1867" />
     </state>
