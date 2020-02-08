@@ -10,7 +10,6 @@ use AsyncAws\S3\Input\ObjectIdentifier;
 use AsyncAws\S3\Result\AwsObject;
 use AsyncAws\S3\Result\CommonPrefix;
 use AsyncAws\S3\Result\HeadObjectOutput;
-use AsyncAws\S3\Result\ListObjectsOutput;
 use AsyncAws\S3\S3Client;
 use Generator;
 use League\Flysystem\Config;

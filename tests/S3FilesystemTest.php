@@ -105,33 +105,6 @@ class S3FilesystemTest extends FilesystemAdapterTestCase
         $this->assertEquals('something/1/also/here.txt', $file->path());
     }
 
-    /**
-     * @test
-     */
-    public function failing_to_delete_while_moving()
-    {
-        $this->expectException(UnableToMoveFile::class);
-
-        $adapter = $this->adapter();
-        $adapter->write('source.txt', 'contents to be copied', new Config());
-        $this->stubS3Client->throwExceptionWhenExecutingCommand('CopyObject');
-
-        $adapter->move('source.txt', 'destination.txt', new Config());
-    }
-
-    /**
-     * @test
-     */
-    public function failing_to_delete_a_file()
-    {
-        $this->expectException(UnableToDeleteFile::class);
-
-        $this->stubS3Client->throwExceptionWhenExecutingCommand('DeleteObject');
-        $adapter = $this->adapter();
-
-        $adapter->delete('path.txt');
-    }
-
     protected function createFilesystemAdapter(): FilesystemAdapter
     {
         $bucket = getenv('FLYSYSTEM_AWS_S3_BUCKET') ?: 'flysystem-test-bucket';
