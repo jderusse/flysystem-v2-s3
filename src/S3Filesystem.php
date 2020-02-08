@@ -9,6 +9,7 @@ use AsyncAws\Core\StreamableBody;
 use AsyncAws\S3\Input\ObjectIdentifier;
 use AsyncAws\S3\Result\AwsObject;
 use AsyncAws\S3\Result\CommonPrefix;
+use AsyncAws\S3\Result\HeadObjectOutput;
 use AsyncAws\S3\Result\ListObjectsOutput;
 use AsyncAws\S3\S3Client;
 use Generator;
@@ -234,7 +235,6 @@ class S3Filesystem implements FilesystemAdapter
         $listing = $this->retrievePaginatedListing($options);
 
         foreach ($listing as $item) {
-            // TODO verify if this is the correct data to send.
             yield $this->mapS3ObjectMetadata($item);
         }
     }
@@ -335,38 +335,67 @@ class S3Filesystem implements FilesystemAdapter
         return $attributes;
     }
 
-    private function mapS3ObjectMetadata(array $metadata, $path = null): StorageAttributes
+    /**
+     * @param HeadObjectOutput|AwsObject|CommonPrefix $item
+     */
+    private function mapS3ObjectMetadata($item, $path = null): StorageAttributes
     {
-        // TODO verify correcstness
         if (null === $path) {
-            $path = $this->prefixer->stripPrefix($metadata['Key'] ?? $metadata['Prefix']);
+            if ($item instanceof AwsObject) {
+                $path = $this->prefixer->stripPrefix($item->getKey());
+            } elseif ($item instanceof CommonPrefix) {
+                $path = $this->prefixer->stripPrefix($item->getPrefix());
+            }
         }
 
         if ('/' === substr($path, -1)) {
             return new DirectoryAttributes(rtrim($path, '/'));
         }
 
-        $mimetype = $metadata['ContentType'] ?? null;
-        $fileSize = $metadata['ContentLength'] ?? $metadata['Size'] ?? null;
+        $mimeType = null;
+        $fileSize = null;
         $lastModified = null;
-        $dateTime = $metadata['LastModified'] ?? null;
+        $dateTime = null;
+
+        if ($item instanceof AwsObject) {
+            $dateTime = $item->getLastModified();
+            $fileSize = $item->getSize();
+        } elseif ($item instanceof CommonPrefix) {
+            // No data available
+            $x =2;
+        } elseif ($item instanceof HeadObjectOutput){
+            $mimeType = $item->getContentType();
+            $fileSize = $item->getContentLength();
+            $dateTime = $item->getLastModified();
+        } else {
+            throw new \RuntimeException(sprintf('Object of class "%s" is not supported in %s::%s()', get_class($item), __CLASS__, __METHOD__));
+        }
 
         if ($dateTime instanceof \DateTimeInterface) {
             $lastModified = $dateTime->getTimestamp();
         }
 
         return new FileAttributes(
-            $path, (int) $fileSize, null, $lastModified, $mimetype, $this->extractExtraMetadata($metadata)
+            $path, (int) $fileSize, null, $lastModified, $mimeType, $this->extractExtraMetadata($item)
         );
     }
 
-    private function extractExtraMetadata(array $metadata): array
+    /**
+     * @param HeadObjectOutput $metadata
+     * @return array
+     */
+    private function extractExtraMetadata($metadata): array
     {
         $extracted = [];
 
         foreach (static::EXTRA_METADATA_FIELDS as $field) {
-            if (isset($metadata[$field]) && '' !== $metadata[$field]) {
-                $extracted[$field] = $metadata[$field];
+            $method = 'get'.$field;
+            if (!method_exists($metadata, $method)) {
+                continue;
+            }
+            $value = $metadata->$method();
+            if (null !== $value) {
+                $extracted[$field] = $value;
             }
         }
 

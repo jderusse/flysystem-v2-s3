@@ -27,6 +27,9 @@ jobs:
         run: |
           composer update --no-interaction --prefer-dist --prefer-stable --optimize-autoloader
 
+      - name: Initialize tests
+        run: make initialize
+
       - name: Run tests
         run: |
           echo ::group::Install

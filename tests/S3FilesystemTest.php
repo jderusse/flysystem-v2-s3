@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace League\Flysystem\AwsS3V3;
 
-use Aws\S3\S3Client;
-use Aws\S3\S3ClientInterface;
+use AsyncAws\Flysystem\S3Filesystem;
+use AsyncAws\S3\S3Client;
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;
 use League\Flysystem\FilesystemAdapter;
@@ -14,21 +14,16 @@ use League\Flysystem\StorageAttributes;
 use League\Flysystem\UnableToDeleteFile;
 use League\Flysystem\UnableToMoveFile;
 
-class AwsS3V3FilesystemTest extends FilesystemAdapterTestCase
+class S3FilesystemTest extends FilesystemAdapterTestCase
 {
     private $shouldCleanUp = false;
 
     private static $adapterPrefix = 'test-prefix';
 
     /**
-     * @var S3ClientInterface
+     * @var S3Client
      */
     private $s3Client;
-
-    /**
-     * @var S3ClientStub
-     */
-    private $stubS3Client;
 
     public static function setUpBeforeClass(): void
     {
@@ -54,9 +49,9 @@ class AwsS3V3FilesystemTest extends FilesystemAdapterTestCase
         }
     }
 
-    private function s3Client(): S3ClientInterface
+    private function s3Client(): S3Client
     {
-        if ($this->s3Client instanceof S3ClientInterface) {
+        if ($this->s3Client instanceof S3Client) {
             return $this->s3Client;
         }
 
@@ -66,11 +61,14 @@ class AwsS3V3FilesystemTest extends FilesystemAdapterTestCase
         $region = getenv('FLYSYSTEM_AWS_S3_REGION') ?: 'eu-central-1';
 
         if ( ! $key || ! $secret || ! $bucket) {
-            $this->markTestSkipped('No AWS credentials present for testing.');
+            // Use docker
+            $this->shouldCleanUp = true;
+
+            return $this->s3Client =  new S3Client(['endpoint' => 'http://localhost:4569',]);
         }
 
         $this->shouldCleanUp = true;
-        $options = ['version' => 'latest', 'credentials' => compact('key', 'secret'), 'region' => $region];
+        $options = ['accessKeyId' => $key, 'accessKeySecret' => $secret, 'region' => $region];
 
         return $this->s3Client = new S3Client($options);
     }
@@ -136,10 +134,9 @@ class AwsS3V3FilesystemTest extends FilesystemAdapterTestCase
 
     protected function createFilesystemAdapter(): FilesystemAdapter
     {
-        $this->stubS3Client = new S3ClientStub($this->s3Client());
-        $bucket = getenv('FLYSYSTEM_AWS_S3_BUCKET');
+        $bucket = getenv('FLYSYSTEM_AWS_S3_BUCKET') ?: 'flysystem-test-bucket';
         $prefix = getenv('FLYSYSTEM_AWS_S3_PREFIX') ?: static::$adapterPrefix;
 
-        return new AwsS3V3Filesystem($this->stubS3Client, $bucket, $prefix);
+        return new S3Filesystem($this->s3Client(), $bucket, $prefix);
     }
 }
