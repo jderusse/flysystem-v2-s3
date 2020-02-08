@@ -6,6 +6,9 @@ namespace AsyncAws\Flysystem;
 
 use AsyncAws\Core\Exception\Http\ClientException;
 use AsyncAws\Core\StreamableBody;
+use AsyncAws\S3\Input\ObjectIdentifier;
+use AsyncAws\S3\Result\AwsObject;
+use AsyncAws\S3\Result\CommonPrefix;
 use AsyncAws\S3\Result\ListObjectsOutput;
 use AsyncAws\S3\S3Client;
 use Generator;
@@ -150,8 +153,19 @@ class S3Filesystem implements FilesystemAdapter
         $prefix = $this->prefixer->prefixPath($path);
         $prefix = ltrim(rtrim($prefix, '/') . '/', '/');
 
-        // TODO fixme
-        $this->client->deleteMatchingObjects($this->bucket, $prefix);
+        $objects = [];
+        $params = ['Bucket' => $this->bucket, 'Prefix' => $prefix];
+        $result = $this->client->listObjectsV2($params);
+        /** @var AwsObject $item */
+        foreach ($result->getContents() as $item) {
+            $objects[] = new ObjectIdentifier(['Key'=> $item->getKey()]);
+        }
+
+        if (empty($objects)) {
+            return;
+        }
+
+        $this->client->deleteObjects(['Bucket'=>$this->bucket, 'Delete' => ['Objects'=>$objects]])->resolve();
     }
 
     public function createDirectory(string $path, Config $config): void
@@ -312,7 +326,6 @@ class S3Filesystem implements FilesystemAdapter
             throw UnableToRetrieveMetadata::create($path, $type, '', $exception);
         }
 
-        // TODO verify Metadata on result.  https://github.com/async-aws/aws/issues/91
         $attributes = $this->mapS3ObjectMetadata($result, $path);
 
         if (!$attributes instanceof FileAttributes) {
@@ -324,6 +337,7 @@ class S3Filesystem implements FilesystemAdapter
 
     private function mapS3ObjectMetadata(array $metadata, $path = null): StorageAttributes
     {
+        // TODO verify correcstness
         if (null === $path) {
             $path = $this->prefixer->stripPrefix($metadata['Key'] ?? $metadata['Prefix']);
         }
@@ -361,12 +375,10 @@ class S3Filesystem implements FilesystemAdapter
 
     private function retrievePaginatedListing(array $options): Generator
     {
-        $result = $this->client->listObjects($options);
+        $result = $this->client->listObjectsV2($options);
 
-        /** @var ListObjectsOutput $item */
-        foreach ($result->iterable() as $item) {
-            yield from ($item->getCommonPrefixes());
-            yield from ($item->getContents());
+        foreach ($result as $item) {
+            yield $item;
         }
     }
 
